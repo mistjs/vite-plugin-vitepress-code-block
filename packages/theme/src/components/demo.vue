@@ -1,13 +1,14 @@
 <script lang="ts" setup>
-defineProps<{
-  src: string
-}>()
+import comps from 'virtual:vitepress-code-block'
+defineProps<{ src?: string }>()
+// console.log(comps)
 </script>
 <template>
   <div>
     <slot name="icon" />
     <slot />
     {{ src }}
+    {{ comps() }}
   </div>
 </template>
 <script lang="ts">

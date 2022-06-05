@@ -1,8 +1,5 @@
 # Demo
 
 
-<demo src="aaa"></demo>
+<demo src="./test.vue"></demo>
 
-<demo src="aaa"></demo>
-
-<demo src="aaa"></demo>

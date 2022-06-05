@@ -1,56 +1,62 @@
 import type { Plugin } from 'vite'
 import { createMarkdownRenderer } from 'vitepress'
-// import type * as MarkdownIt from 'markdown-it'
-import type { CodeBlockOptions } from './typing.'
+import MagicString from 'magic-string'
+import type { CodeBlockOptions, VirtualMapType } from './typing'
+import { transformCode } from './transform-code'
+import { loadModule } from './load-module'
 const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
   const {
     wrapper = 'demo',
   } = (options || {})
+  const virtualModule = 'virtual:vitepress-code-block'
+  const resolvedVirtualModuleId = `\0${virtualModule}`
+  const virtualMap: Map<string, VirtualMapType> = new Map()
   let md: any
   return {
     name: 'vite-plugin-vitepress-code-block',
     enforce: 'pre',
-    config(config) {
-      // console.log(config)
-      // config.plugins = []
+    resolveId(id: string) {
+      if (id === virtualModule) {
+        // TODO
+        return resolvedVirtualModuleId
+      }
     },
     async configResolved(config) {
       md = await createMarkdownRenderer(config.root, {}, config.base)
       md.__replaceCode = new Map()
       const rawRule = md.renderer.rules.html_block!
       md.renderer.rules.html_block = function(tokens, idx, options, env, self) {
-        // console.log(md.__path)
         const content = tokens[idx].content
-        // console.log(content, idx)
-        // md.__sourceData.replace(content, '测试啊啊啊啊啊啊')
-        // md.__replaceCode.set(content, '测试啊啊啊啊啊啊')
+        const renderCode = transformCode(content, md, wrapper, virtualMap, config.root)
+        md.__replaceCode.set(content, renderCode)
         return rawRule(tokens, idx, options, env, self)
       }
-      // console.log(md.render)
-      // console.log(config)
     },
     transform(code: string, id: string) {
       if (id.endsWith('.md')) {
         md.__path = id
         md.__replaceCode.clear()
+        const s = new MagicString(code)
         md.render(code)
-        Array.from(md.__replaceCode.entries()).forEach(([key, value]) => {
-          code = code.replace(key, value)
-        })
-        // console.log(code)
+        Array.from(md.__replaceCode.entries()).forEach(
+          ([key, value]) => {
+            s.replace(key, value)
+          },
+        )
         return {
-          code,
+          code: s.toString(),
+          map: s.generateMap(),
         }
       }
-
-      // TODO
-      // const body = this.parse(code).body
-      // return {
-      //   // code: md.render(code),
-      // }
     },
-    buildStart(options) {
-      // console.log('buildStart', options)
+    load(id: string) {
+      if (id === resolvedVirtualModuleId) {
+        // 判断，当前所处的页面
+        return {
+          code: `export default function(){ return ${loadModule(virtualMap)} }`,
+          map: null,
+        }
+      }
     },
   }
 }

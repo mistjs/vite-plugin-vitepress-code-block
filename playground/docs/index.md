@@ -3,13 +3,10 @@
 
 sample text
 
-<demo src="./dist/index1.vue"></demo>
-
-<demo src="./dist/index2.vue"></demo>
-
 ## 测试
 
-<demo src="./dist/index23vue"></demo>
+<demo src="./test.vue"></demo>
+
 
 
 <!--

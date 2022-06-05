@@ -13,7 +13,9 @@
   },
   "scripts": {
     "dev": "unbuild --stub",
-    "build": "unbuild"
+    "build": "unbuild",
+    "test": "vitest",
+    "test:u": "vitest -u"
   },
   "keywords": [],
   "author": "",

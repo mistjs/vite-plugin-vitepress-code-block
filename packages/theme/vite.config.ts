@@ -8,7 +8,7 @@ export default defineConfig({
   ],
   build: {
     rollupOptions: {
-      external: ['vue'],
+      external: ['vue', 'virtual:vitepress-code-block'],
     },
     lib: {
       entry: 'src/index.ts',
