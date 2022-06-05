@@ -1,0 +1,24 @@
+{
+  "name": "vite-plugin-vitepress-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/vite-plugin-vitepress-demo.cjs.js",
+  "module": "dist/vite-plugin-vitepress-demo.es.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^17.0.38",
+    "@vitejs/plugin-vue": "^2.3.3",
+    "typescript": "^4.7.2",
+    "vite": "^2.9.9",
+    "vite-plugin-dts": "^1.2.0"
+  },
+  "dependencies": {
+    "vue": "^3.2.36"
+  }
+}
