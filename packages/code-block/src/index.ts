@@ -3,24 +3,15 @@ import { createMarkdownRenderer } from 'vitepress'
 import MagicString from 'magic-string'
 import type { CodeBlockOptions, VirtualMapType } from './typing'
 import { transformCode } from './transform-code'
-import { loadModule } from './load-module'
 const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
   const {
     wrapper = 'demo',
   } = (options || {})
-  const virtualModule = 'virtual:vitepress-code-block'
-  const resolvedVirtualModuleId = `\0${virtualModule}`
   const virtualMap: Map<string, VirtualMapType> = new Map()
   let md: any
   return {
     name: 'vite-plugin-vitepress-code-block',
     enforce: 'pre',
-    resolveId(id: string) {
-      if (id === virtualModule) {
-        // TODO
-        return resolvedVirtualModuleId
-      }
-    },
     async configResolved(config) {
       md = await createMarkdownRenderer(config.root, {}, config.base)
       md.__replaceCode = new Map()
@@ -46,15 +37,6 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
         return {
           code: s.toString(),
           map: s.generateMap(),
-        }
-      }
-    },
-    load(id: string) {
-      if (id === resolvedVirtualModuleId) {
-        // 判断，当前所处的页面
-        return {
-          code: `export default function(){ return ${loadModule(virtualMap)} }`,
-          map: null,
         }
       }
     },
