@@ -48,14 +48,18 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
             const relativePath = relative(root, filePath)
             if (!virtualMap.has(relativePath)) {
               // 存在就不处理了
+              const formatCode = renderSourceCode(md, codeSource.type, codeSource.code)
               virtualMap.set(relativePath, {
                 code: codeSource.code,
                 type: codeSource.type,
-                formatCode: renderSourceCode(md, codeSource.type, codeSource.code),
+                formatCode,
                 path: attrs.src,
                 root,
                 comp: () => import(filePath),
               })
+              attrs.code = encodeURIComponent(codeSource.code)
+              attrs.highlight = encodeURIComponent(formatCode)
+              attrs[':comp'] = `__yanyu__code__block['${attrs.src}']`
             }
             attrs.src = relativePath
           }
@@ -67,8 +71,17 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
       }
       else {
         // TODO
-        if (isArray<Node>(nodeListElement.content))
-          nodeListElement.content = renderWrapper(nodeListElement.content, wrapper, dir, md, virtualMap, root)
+        if (isArray<Node>(nodeListElement.content)) {
+          // 判断是不是字符串，如果是字符串，需要处理一下再赋值
+          const dataSource = renderWrapper(nodeListElement.content, wrapper, dir, md, virtualMap, root)
+          if (isString(dataSource)) {
+            nodeListElement.content = []
+            nodeListElement.content.push(dataSource)
+          }
+          else {
+            nodeListElement.content = dataSource
+          }
+        }
       }
     }
   }

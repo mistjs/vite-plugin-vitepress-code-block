@@ -3,6 +3,12 @@
 
 sample text
 
+```vue
+<template>
+  <div>测试</div>
+</template>
+```
+
 ## 测试
 
 <demo src="./test.vue"></demo>
