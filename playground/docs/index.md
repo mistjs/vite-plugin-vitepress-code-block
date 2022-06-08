@@ -13,6 +13,8 @@ sample text
 
 <demo src="./test.vue"></demo>
 
+<demo src="./test.vue"></demo>
+
 
 
 <!--

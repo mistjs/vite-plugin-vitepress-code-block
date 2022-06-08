@@ -5,8 +5,7 @@ export const loadModule = (virtulModule: Map<string, VirtualMapType>): string =>
   let imported = 'const __yanyu__code__block = {\n'
   virtulModule.forEach((value) => {
     const path = value.path
-    // imported[path] = `defineAsyncComponent(()=>import(${path}))`
-    imported += `"${path}":defineAsyncComponent(()=>import("${path}")),\n`
+    imported += `"${path}":{"language": "${value.type}","code": "${encodeURIComponent(value.code)}","highlight": "${encodeURIComponent(value.formatCode)}","comp": defineAsyncComponent(()=>import("${path}"))},`
   })
   return `${modules}${imported}}`
 }

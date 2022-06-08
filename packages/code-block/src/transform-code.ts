@@ -55,13 +55,20 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
                 formatCode,
                 path: attrs.src,
                 root,
-                comp: () => import(filePath),
               })
-              attrs.code = encodeURIComponent(codeSource.code)
-              attrs.highlight = encodeURIComponent(formatCode)
-              attrs[':comp'] = `__yanyu__code__block['${attrs.src}']`
+              // attrs.code = encodeURIComponent(codeSource.code)
+              // attrs.highlight = encodeURIComponent(formatCode)
             }
-            attrs.src = relativePath
+            // else {
+            //   // const data = virtualMap.get(relativePath)
+            //   // attrs.code = encodeURIComponent(data.code)
+            //   // attrs.highlight = encodeURIComponent(data.formatCode)
+            //   attrs[':comp'] = `__yanyu__code__block['${attrs.src}']`
+            // }
+            attrs['v-bind'] = `__yanyu__code__block['${attrs.src}']`
+
+            if (attrs.src)
+              delete attrs.src
           }
           else {
             // 其他情况直接编译成对应的源码格式就好

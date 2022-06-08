@@ -13,5 +13,4 @@ export interface VirtualMapType {
   type?: string
   path: string
   root: string
-  comp: any
 }
