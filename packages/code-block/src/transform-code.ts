@@ -28,7 +28,8 @@ const renderSourceCode = (md: any, ext: string, code: string) => {
   return md.render(formatCode)
 }
 
-const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, virtualMap: Map<string, VirtualMapType>, root: string): string|undefined => {
+const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any,
+  virtualMap: Map<string, VirtualMapType>, root: string, hmrMap: Map<string, Set<string>>): string|undefined => {
   for (const nodeListElement of nodeList) {
     // 判断当前是不是一个NodeTag
     if (!isString(nodeListElement) && !isNumber(nodeListElement)) {
@@ -46,6 +47,15 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
             // 当前的path中是否已经处理过了，
             // 或者已经被处理过了，那么我们不需要再进行处理了，直接用
             const relativePath = relative(root, filePath)
+            const id = md.__path
+            if (hmrMap.has(filePath)) {
+              const setData = hmrMap.get(filePath)
+              if (!setData.has(id))
+                setData.add(id)
+            }
+            else {
+              hmrMap.set(filePath, (new Set<string>()).add(id))
+            }
             if (!virtualMap.has(relativePath)) {
               // 存在就不处理了
               const formatCode = renderSourceCode(md, codeSource.type, codeSource.code)
@@ -56,17 +66,8 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
                 path: attrs.src,
                 root,
               })
-              // attrs.code = encodeURIComponent(codeSource.code)
-              // attrs.highlight = encodeURIComponent(formatCode)
             }
-            // else {
-            //   // const data = virtualMap.get(relativePath)
-            //   // attrs.code = encodeURIComponent(data.code)
-            //   // attrs.highlight = encodeURIComponent(data.formatCode)
-            //   attrs[':comp'] = `__yanyu__code__block['${attrs.src}']`
-            // }
             attrs['v-bind'] = `__yanyu__code__block['${attrs.src}']`
-
             if (attrs.src)
               delete attrs.src
           }
@@ -80,7 +81,7 @@ const renderWrapper = (nodeList: Node[], wrapper: string, dir: string, md: any, 
         // TODO
         if (isArray<Node>(nodeListElement.content)) {
           // 判断是不是字符串，如果是字符串，需要处理一下再赋值
-          const dataSource = renderWrapper(nodeListElement.content, wrapper, dir, md, virtualMap, root)
+          const dataSource = renderWrapper(nodeListElement.content, wrapper, dir, md, virtualMap, root, hmrMap)
           if (isString(dataSource)) {
             nodeListElement.content = []
             nodeListElement.content.push(dataSource)
@@ -99,13 +100,13 @@ export const transformCode = (
   md: any,
   wrapper = 'demo',
   virtualMap: Map<string, VirtualMapType>,
-  root: string): string => {
+  root: string, hmrMap: Map<string, Set<string>>): string => {
   const id = md.__path
   // 拿到当前的数据，开始对数据进行处理
   const parserNode: Node[] = parser(content)
   // 开始遍历数据
   const dir = dirname(id)
-  const sourceData = renderWrapper(parserNode, wrapper, dir, md, virtualMap, root)
+  const sourceData = renderWrapper(parserNode, wrapper, dir, md, virtualMap, root, hmrMap)
   if (sourceData)
     return sourceData
   return render(parserNode)

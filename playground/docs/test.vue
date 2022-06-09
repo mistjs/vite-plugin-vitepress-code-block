@@ -3,7 +3,7 @@ const props = defineProps<{}>()
 </script>
 <template>
   <div>
-    Test11112121121111111112121
+    Test啊啊啊1啊实打实1
   </div>
 </template>
 

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 const props = defineProps<{ code?: string;highlight?: string;type?: string;comp?: any }>()
 const formatCode = computed(() => props.code ? decodeURIComponent(props.code) : '')
-
+const data = ref(1)
 const formatHighlight = computed(() =>
   props.highlight
     ? decodeURIComponent(props.highlight)
@@ -12,6 +12,9 @@ const formatHighlight = computed(() =>
 </script>
 <template>
   <div style="display: flex;flex-direction: column">
+    <button @click="data ++">
+      按钮{{ data }}
+    </button>
     <suspense>
       <component :is="comp" />
       <template #fallback>

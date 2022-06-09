@@ -1,4 +1,5 @@
-import type { Plugin, ResolvedConfig } from 'vite'
+import { relative } from 'path'
+import type { HmrContext, Plugin, ResolvedConfig, Update } from 'vite'
 import { createMarkdownRenderer } from 'vitepress'
 import MagicString from 'magic-string'
 import type { CodeBlockOptions, VirtualMapType } from './typing'
@@ -14,6 +15,7 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
   let md: any
   let _config: ResolvedConfig
   let codeArr: string[]
+  const hmrMap: Map<string, Set<string>> = new Map()
   return {
     name: 'vite-plugin-vitepress-code-block',
     enforce: 'pre',
@@ -26,7 +28,7 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
         const content = tokens[idx].content
         const map = tokens[idx].map
         replaceIdx++
-        const renderCode = transformCode(content, md, wrapper, virtualMap, config.root)
+        const renderCode = transformCode(content, md, wrapper, virtualMap, config.root, hmrMap)
         md.__replaceCode.set(replaceIdx, {
           map: computedPosition(codeArr, map, content),
           renderCode,
@@ -51,15 +53,33 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
           },
         )
         const { replaceCode, code: sourceCode } = compileScript(code, virtualMap, _config.command)
-        // console.log(replaceCode, sourceCode)
-        // if (replaceCode)
-        //   s.prepend(sourceCode)
-        // else
-        //   s.replace(replaceCode, sourceCode)
+        if (!replaceCode)
+          s.prepend(sourceCode)
+        else
+          s.replace(replaceCode, sourceCode)
         return {
-          code: s.toString() + sourceCode,
+          code: s.toString(),
           map: s.generateMap(),
         }
+      }
+    },
+    handleHotUpdate(ctx: HmrContext) {
+      if (hmrMap.has(ctx.file)) {
+        const data = hmrMap.get(ctx.file)
+        const hmrData: Update[] = []
+        data.forEach((value) => {
+          const myPath = `/${relative(_config.root, value)}`
+          hmrData.push({
+            type: 'js-update',
+            path: myPath,
+            acceptedPath: myPath,
+            timestamp: Date.now(),
+          })
+        })
+        ctx.server.ws.send({
+          type: 'update',
+          updates: hmrData,
+        })
       }
     },
   }
