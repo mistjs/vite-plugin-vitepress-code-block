@@ -1,6 +1,6 @@
 # vite-plugin-vitepress-code-block
 
-With this plugin, you can translate code blocks into a demo module that demonstrates
+使用该插件，你可以将代码块转换为一个演示模块，以便你可以在示例中查看它的功能。
 
 
 ## Install
@@ -19,8 +19,7 @@ pnpm add vite-plugin-vitepress-code-block -D
 
 ## Usage
 
-We create a folder in the project root directory called `.vitepress`. then we create a file called `config.ts/js` in this folder.
-
+我们在项目根目录创建一个名为`.vitepress`的文件夹，然后在这个文件夹下创建一个名为`config.ts/js`的文件。
 
 ```ts
 import { defineConfig } from 'vitepress'

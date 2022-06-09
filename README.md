@@ -1,2 +1,5 @@
 # vite-plugin-vitepress-code-block
-this is vitepress code block demo 
+
+[code-block link](https://github.com/mistjs/vite-plugin-vitepress-code-block/tree/main/packages/code-block)
+
+[theme link](https://github.com/mistjs/vite-plugin-vitepress-code-block/tree/main/packages/theme)

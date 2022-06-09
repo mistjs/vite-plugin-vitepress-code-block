@@ -16,7 +16,7 @@
     "vite": "^2.9.9",
     "vite-plugin-inspect": "^0.5.0",
     "vite-plugin-vitepress-code-block": "workspace:*",
-    "vite-plugin-vitepress-demo": "workspace:*",
+    "vitepress-theme-code-block": "workspace:*",
     "vitepress": "1.0.0-alpha.1"
   }
 }
