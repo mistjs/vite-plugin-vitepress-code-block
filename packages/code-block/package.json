@@ -11,6 +11,22 @@
       "require": "./dist/index.cjs"
     }
   },
+  "author": {
+    "name": "aibayanyu",
+    "email": "aibayanyu@qq.com",
+    "url": "https://www.28yanyu.cn"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mistjs/vite-plugin-vitepress-code-block.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mistjs/vite-plugin-vitepress-code-block/issues"
+  },
   "scripts": {
     "dev": "unbuild --stub",
     "build": "unbuild",
@@ -18,7 +34,6 @@
     "test:u": "vitest -u"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "devDependencies": {
     "@types/lodash": "^4.14.182",
