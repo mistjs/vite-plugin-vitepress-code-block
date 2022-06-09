@@ -1,9 +1,9 @@
 import DefaultTheme from 'vitepress/theme'
 import type { Theme } from 'vitepress'
-import { Demo } from 'vite-plugin-vitepress-demo'
+import { CodeDemo, Demo } from 'vite-plugin-vitepress-demo'
 export default {
   ...DefaultTheme,
   enhanceApp({ app }) {
-    app.component('Demo', Demo)
+    app.component('Demo', CodeDemo)
   },
 } as Theme

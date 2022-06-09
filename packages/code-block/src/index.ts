@@ -6,13 +6,17 @@ import type { CodeBlockOptions, VirtualMapType } from './typing'
 import { transformCode } from './transform-code'
 import { compileScript } from './compile-script'
 import { computedPosition } from './position'
+type MDType = Awaited<ReturnType<typeof createMarkdownRenderer>> &{
+  __replaceCode: Map<string, any>
+  __path: string
+}
 const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
   const {
     wrapper = 'demo',
   } = (options || {})
   const virtualMap: Map<string, VirtualMapType> = new Map()
   let replaceIdx = 0
-  let md: any
+  let md: MDType
   let _config: ResolvedConfig
   let codeArr: string[]
   const hmrMap: Map<string, Set<string>> = new Map()
@@ -21,7 +25,7 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
     enforce: 'pre',
     async configResolved(config) {
       _config = config
-      md = await createMarkdownRenderer(config.root, {}, config.base)
+      md = await createMarkdownRenderer(config.root, {}, config.base) as MDType
       md.__replaceCode = new Map()
       const rawRule = md.renderer.rules.html_block!
       md.renderer.rules.html_block = function(tokens, idx, options, env, self) {
@@ -29,8 +33,8 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
         const map = tokens[idx].map
         replaceIdx++
         const renderCode = transformCode(content, md, wrapper, virtualMap, config.root, hmrMap)
-        md.__replaceCode.set(replaceIdx, {
-          map: computedPosition(codeArr, map, content),
+        md.__replaceCode.set(String(replaceIdx), {
+          map: computedPosition(codeArr, map || [0, 0], content),
           renderCode,
         })
         return rawRule(tokens, idx, options, env, self)
@@ -67,19 +71,21 @@ const vitePluginVitepressCodeBlock = (options?: CodeBlockOptions): Plugin => {
       if (hmrMap.has(ctx.file)) {
         const data = hmrMap.get(ctx.file)
         const hmrData: Update[] = []
-        data.forEach((value) => {
-          const myPath = `/${relative(_config.root, value)}`
-          hmrData.push({
-            type: 'js-update',
-            path: myPath,
-            acceptedPath: myPath,
-            timestamp: Date.now(),
+        if (data) {
+          data.forEach((value) => {
+            const myPath = `/${relative(_config.root, value)}`
+            hmrData.push({
+              type: 'js-update',
+              path: myPath,
+              acceptedPath: myPath,
+              timestamp: Date.now(),
+            })
           })
-        })
-        ctx.server.ws.send({
-          type: 'update',
-          updates: hmrData,
-        })
+          ctx.server.ws.send({
+            type: 'update',
+            updates: hmrData,
+          })
+        }
       }
     },
   }

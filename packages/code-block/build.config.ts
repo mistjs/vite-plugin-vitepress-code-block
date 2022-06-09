@@ -2,8 +2,14 @@ import { defineBuildConfig } from 'unbuild'
 
 export default defineBuildConfig({
   externals: [
-    'vitepress',
+    'fast-glob',
+    'lodash',
+    'magic-string',
+    'markdown-it',
+    'posthtml-parser',
+    'posthtml-render',
     'vite',
+    'vitepress',
   ],
   entries: [
     'src/index',
