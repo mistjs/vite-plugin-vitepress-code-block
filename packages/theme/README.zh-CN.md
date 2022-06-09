@@ -1,5 +1,8 @@
 # vitepress-theme-code-block
 
+[en-US](https://github.com/mistjs/vite-plugin-vitepress-code-block/tree/main/packages/theme)  |
+简体中文
+
 这是一个基于vitepress 的代码块主题插件
 
 ## Install

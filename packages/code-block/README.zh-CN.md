@@ -1,5 +1,8 @@
 # vite-plugin-vitepress-code-block
 
+[en-US](https://github.com/mistjs/vite-plugin-vitepress-code-block/tree/main/packages/code-block)  |
+简体中文
+
 使用该插件，你可以将代码块转换为一个演示模块，以便你可以在示例中查看它的功能。
 
 

@@ -1,5 +1,8 @@
 # vite-plugin-vitepress-code-block
 
+[en-US](https://github.com/mistjs/vite-plugin-vitepress-code-block/tree/main/packages/code-block)  |
+简体中文
+
 With this plugin, you can translate code blocks into a demo module that demonstrates
 
 

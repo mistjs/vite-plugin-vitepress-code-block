@@ -1,5 +1,9 @@
 # vitepress-theme-code-block
 
+en-US |
+[简体中文](https://github.com/mistjs/vite-plugin-vitepress-code-block/blob/main/packages/theme/README.zh-CN.md)
+
+
 This is a code block theme plugin based on vitepress
 
 ## Install
